@@ -1,0 +1,12 @@
+import { Router } from 'express';
+import { getAllLinks, getLinkBySlug, createLink, revokeLink, previewProductInfo, } from '../controllers/linksController.js';
+import { requireAuth } from '../middleware/auth.js';
+const router = Router();
+router.get('/', requireAuth, getAllLinks);
+router.post('/', requireAuth, createLink);
+router.post('/preview', previewProductInfo);
+router.get('/preview', previewProductInfo);
+router.delete('/', requireAuth, revokeLink);
+router.delete('/:id', requireAuth, revokeLink);
+router.get('/:slug', getLinkBySlug);
+export default router;
