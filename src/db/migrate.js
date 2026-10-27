@@ -144,11 +144,21 @@ export async function runMigrations() {
         client.release();
     }
 }
-if (require.main === module) {
+import { fileURLToPath } from 'url';
+
+const isDirectRun = Boolean(
+    process.argv[1] && (
+        fileURLToPath(import.meta.url) === process.argv[1] ||
+        process.argv[1].endsWith('migrate.js')
+    )
+);
+
+if (isDirectRun) {
     runMigrations()
         .then(() => process.exit(0))
         .catch((err) => {
-        console.error(err);
-        process.exit(1);
-    });
+            console.error(err);
+            process.exit(1);
+        });
 }
+

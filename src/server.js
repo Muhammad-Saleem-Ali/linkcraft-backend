@@ -11,6 +11,8 @@ import realtimeRoutes from './routes/realtimeRoutes.js';
 import whatsappRoutes from './routes/whatsappRoutes.js';
 import { handleRedirect } from './controllers/linksController.js';
 import { errorHandler } from './middleware/errorHandler.js';
+import { runMigrations } from './db/migrate.js';
+import { seedDatabase } from './db/seed.js';
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -80,11 +82,16 @@ app.listen(PORT, async () => {
     console.log(`===============================================`);
     try {
         const client = await pool.connect();
-        console.log('✅ Connected to PostgreSQL 16 on port', process.env.DB_PORT || 5433);
+        console.log('✅ Connected to PostgreSQL database');
         client.release();
+
+        // Run migrations and initial seed automatically
+        await runMigrations();
+        await seedDatabase();
+        console.log('✅ Database schema verified & up-to-date');
     }
     catch (err) {
-        console.error('❌ Failed to connect to PostgreSQL:', err);
+        console.error('❌ Database connection or migration error:', err);
     }
 });
 export default app;

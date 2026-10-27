@@ -46,3 +46,22 @@ export async function seedDatabase() {
         client.release();
     }
 }
+
+import { fileURLToPath } from 'url';
+
+const isDirectRun = Boolean(
+    process.argv[1] && (
+        fileURLToPath(import.meta.url) === process.argv[1] ||
+        process.argv[1].endsWith('seed.js')
+    )
+);
+
+if (isDirectRun) {
+    seedDatabase()
+        .then(() => process.exit(0))
+        .catch((err) => {
+            console.error(err);
+            process.exit(1);
+        });
+}
+
